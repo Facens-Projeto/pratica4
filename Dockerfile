@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM eclipse-temurin:21-jdk
 
 # Set the working directory in the container
 WORKDIR /projeto
