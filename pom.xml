@@ -12,10 +12,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>ac2_project.example</groupId>
-    <artifactId>ac2_ca</artifactId>
+    <groupId>af_project.example</groupId>
+    <artifactId>projeto</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ac2_ca</name>
+    <name>projeto</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
