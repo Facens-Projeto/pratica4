@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Endpoints relacionados a notificações dos alunos inscritos nos cursos.
+ */
 @RestController
 @RequestMapping("/alunos")
-public class AlunoController {
+public class CursoAlunoController {
 
     private final CursoMatriculaService cursoMatriculaService;
 
-    public AlunoController(CursoMatriculaService cursoMatriculaService) {
+    public CursoAlunoController(CursoMatriculaService cursoMatriculaService) {
         this.cursoMatriculaService = cursoMatriculaService;
     }
 
