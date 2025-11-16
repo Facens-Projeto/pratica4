@@ -5,6 +5,7 @@ import af_project.example.projeto.curso.domain.CursoMatriculaStatus;
 import af_project.example.projeto.curso.domain.NotificacaoAgendada;
 import af_project.example.projeto.curso.domain.NotificacaoTipo;
 import af_project.example.projeto.curso.repository.CursoMatriculaRepository;
+import af_project.example.projeto.curso.event.NotificacaoMatriculaEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,9 +57,12 @@ class CursoMatriculaServiceTest {
                 .extracting(NotificacaoAgendada::getTipo)
                 .containsExactlyInAnyOrder(NotificacaoTipo.LIMITE_INICIO, NotificacaoTipo.LIMITE_CONCLUSAO);
 
-        ArgumentCaptor<Object> eventCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(eventPublisher).publishEvent(eventCaptor.capture());
-        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        ArgumentCaptor<NotificacaoMatriculaEvent> eventCaptor = ArgumentCaptor.forClass(NotificacaoMatriculaEvent.class);
+        verify(eventPublisher, times(2)).publishEvent(eventCaptor.capture());
+
+        assertThat(eventCaptor.getAllValues())
+                .extracting(NotificacaoMatriculaEvent::tipo)
+                .containsExactlyInAnyOrder(NotificacaoTipo.LIMITE_INICIO, NotificacaoTipo.LIMITE_CONCLUSAO);
     }
 
     @Test
