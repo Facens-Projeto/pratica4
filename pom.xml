@@ -83,6 +83,27 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.26.0</version> <!-- ou outra versão estável -->
+                <configuration>
+                    <!-- linguagem usada pelo PMD -->
+                    <language>java</language>
+                    <targetJdk>21</targetJdk>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <!-- gera o relatório em XML/HTML -->
+                            <goal>pmd</goal>
+                            <!-- opcional: análise de código duplicado -->
+                            <!-- <goal>cpd</goal> -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
