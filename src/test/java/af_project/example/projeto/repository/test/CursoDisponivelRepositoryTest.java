@@ -24,8 +24,9 @@ class CursoDisponivelRepositoryTest {
 
     @Test
     void deveRetornarTodosCursosSeAlunoNaoBloqueado() {
+        // usa o construtor real: (Long id, String nome, String descricao)
         CursoDisponivel c1 = new CursoDisponivel(null, "Java Básico", "Curso introdutório");
-        CursoDisponivel c2 = new CursoDisponivel(null, "Spring Boot", "Framework moderno");
+        CursoDisponivel c2 = new CursoDisponivel(null, "Spring Boot", "Curso avançado de Spring");
 
         repository.save(c1);
         repository.save(c2);
@@ -33,7 +34,7 @@ class CursoDisponivelRepositoryTest {
         List<CursoDisponivel> lista = repository.listarCursosDisponiveis(false);
 
         assertEquals(2, lista.size());
-        assertTrue(lista.stream().anyMatch(c -> c.getNome().equals("Java Básico")));
-        assertTrue(lista.stream().anyMatch(c -> c.getNome().equals("Spring Boot")));
+        assertTrue(lista.stream().anyMatch(c -> "Java Básico".equals(c.getNome())));
+        assertTrue(lista.stream().anyMatch(c -> "Spring Boot".equals(c.getNome())));
     }
 }

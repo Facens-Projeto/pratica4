@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @SpringBootApplication
 @Controller
-public class Ac2CaApplication {
+public class ProjetoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Ac2CaApplication.class, args);
+		SpringApplication.run(ProjetoApplication.class, args);
 		
 	}
 		
