@@ -7,7 +7,7 @@ WORKDIR /projeto
 COPY target/*.jar /projeto/projeto-0.0.1-SNAPSHOT.jar
 
 # Expose the port that your application will run on
-EXPOSE 8585
+EXPOSE 8081
 
 # Specify the command to run on container start
 CMD ["java", "-jar", "projeto-0.0.1-SNAPSHOT.jar"]
