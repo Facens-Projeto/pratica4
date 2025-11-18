@@ -1,8 +1,13 @@
 package af_project.example.projeto.service.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 /**
  * Value object que representa o aproveitamento do aluno em um curso.
  */
+@Getter
+@EqualsAndHashCode
 public class Aproveitamento {
 
     private static final double LIMITE_SUCESSO = 0.75d;
@@ -21,10 +26,6 @@ public class Aproveitamento {
         double notaNormalizada = evento.getNotaFinal() / 10d;
         double percentual = (progresso * 0.6) + (notaNormalizada * 0.4);
         return new Aproveitamento(percentual);
-    }
-
-    public double getPercentual() {
-        return percentual;
     }
 
     public boolean isSuficiente() {

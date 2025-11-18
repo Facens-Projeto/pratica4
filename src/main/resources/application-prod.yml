@@ -3,13 +3,13 @@ spring:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:papi}
     username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:postgres}
+
+    hikari:
+      connection-timeout: 30000   # ms
+      maximum-pool-size: 5
+      max-lifetime: 1800000       # ms
+      idle-timeout: 600000        # ms
+
   jpa:
     hibernate:
       ddl-auto: validate
-      
-     
-hikari:
-      connection-timeout: 30000  # Tempo de espera para a conexão (em milissegundos)
-      maximum-pool-size: 5       # Tamanho máximo do pool de conexões
-      max-lifetime: 1800000      # Tempo máximo de vida para uma conexão no pool
-      idle-timeout: 600000       # Tempo de inatividade antes de uma conexão ser descartada

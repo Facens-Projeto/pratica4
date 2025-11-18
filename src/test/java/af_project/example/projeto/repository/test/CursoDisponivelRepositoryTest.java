@@ -17,21 +17,28 @@ class CursoDisponivelRepositoryTest {
     private CursoDisponivelRepository repository;
 
     @Test
-    void deveRetornarListaVaziaSeAlunoBloqueado() {
-        List<CursoDisponivel> lista = repository.listarCursosDisponiveis(true);
+    void deveRetornarListaVaziaQuandoNaoHaCursos() {
+        List<CursoDisponivel> lista = repository.findAll();
         assertTrue(lista.isEmpty());
     }
 
     @Test
-    void deveRetornarTodosCursosSeAlunoNaoBloqueado() {
-        // usa o construtor real: (Long id, String nome, String descricao)
-        CursoDisponivel c1 = new CursoDisponivel(null, "Java Básico", "Curso introdutório");
-        CursoDisponivel c2 = new CursoDisponivel(null, "Spring Boot", "Curso avançado de Spring");
+    void deveRetornarTodosCursosPersistidos() {
+        // usando o builder gerado pelo Lombok em CursoDisponivel
+        CursoDisponivel c1 = CursoDisponivel.builder()
+                .nome("Java Básico")
+                .descricao("Curso introdutório")
+                .build();
+
+        CursoDisponivel c2 = CursoDisponivel.builder()
+                .nome("Spring Boot")
+                .descricao("Curso avançado de Spring")
+                .build();
 
         repository.save(c1);
         repository.save(c2);
 
-        List<CursoDisponivel> lista = repository.listarCursosDisponiveis(false);
+        List<CursoDisponivel> lista = repository.findAll();
 
         assertEquals(2, lista.size());
         assertTrue(lista.stream().anyMatch(c -> "Java Básico".equals(c.getNome())));

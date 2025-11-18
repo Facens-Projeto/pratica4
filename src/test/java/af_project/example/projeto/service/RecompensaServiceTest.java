@@ -1,27 +1,25 @@
 package af_project.example.projeto.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import af_project.example.projeto.entity.Aproveitamento;
 import af_project.example.projeto.entity.CursoDisponivel;
 import af_project.example.projeto.repository.AproveitamentoRepository;
 import af_project.example.projeto.repository.CursoDisponivelRepository;
 import af_project.example.projeto.service.exception.MediaInsuficienteException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class RecompensaServiceTest {
 
     @Mock
@@ -33,42 +31,67 @@ class RecompensaServiceTest {
     @InjectMocks
     private RecompensaService recompensaService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Test
+    void deveRetornarCursosQuandoMediaSuficiente() {
+        Long alunoId = 1L;
+
+        // Aproveitamento com média >= 7.0
+        Aproveitamento ap = new Aproveitamento();
+        ap.setAlunoId(alunoId);
+        ap.setMedia(new BigDecimal("8.0"));
+        ap.setDataReferencia(LocalDate.now());
+
+        when(aproveitamentoRepository.findTopByAlunoIdOrderByDataReferenciaDesc(alunoId))
+                .thenReturn(Optional.of(ap));
+
+        CursoDisponivel c1 = new CursoDisponivel(1L, "Java Básico", "Intro");
+        CursoDisponivel c2 = new CursoDisponivel(2L, "Spring Boot", "Avançado");
+
+        when(cursoDisponivelRepository.findAll())
+                .thenReturn(List.of(c1, c2));
+
+        List<CursoDisponivel> cursos = recompensaService.listarCursosDisponiveis(alunoId);
+
+        assertNotNull(cursos);
+        assertEquals(2, cursos.size());
+        verify(cursoDisponivelRepository, times(1)).findAll();
     }
 
     @Test
-    void deveLiberarCursosQuandoMediaSuficiente() {
-        Aproveitamento aproveitamento = new Aproveitamento();
-        aproveitamento.setMedia(new BigDecimal("8.3"));
+    void deveLancarExcecaoQuandoMediaInsuficiente() {
+        Long alunoId = 2L;
 
-        List<CursoDisponivel> cursos = List.of(new CursoDisponivel(1L, "API Avançada", "Curso de API"));
+        // Aproveitamento com média < 7.0
+        Aproveitamento ap = new Aproveitamento();
+        ap.setAlunoId(alunoId);
+        ap.setMedia(new BigDecimal("6.5"));
+        ap.setDataReferencia(LocalDate.now());
 
-        when(aproveitamentoRepository.findTopByAlunoIdOrderByDataReferenciaDesc(1L))
-                .thenReturn(Optional.of(aproveitamento));
-        when(cursoDisponivelRepository.listarCursosDisponiveis(false)).thenReturn(cursos);
+        when(aproveitamentoRepository.findTopByAlunoIdOrderByDataReferenciaDesc(alunoId))
+                .thenReturn(Optional.of(ap));
 
-        List<CursoDisponivel> resultado = recompensaService.listarCursosDisponiveis(1L);
+        MediaInsuficienteException ex = assertThrows(
+                MediaInsuficienteException.class,
+                () -> recompensaService.listarCursosDisponiveis(alunoId)
+        );
 
-        assertEquals(1, resultado.size());
-        assertEquals("API Avançada", resultado.get(0).getNome());
-        verify(cursoDisponivelRepository).listarCursosDisponiveis(false);
+        assertEquals(RecompensaService.MENSAGEM_MEDIA_INSUFICIENTE, ex.getMessage());
+        verify(cursoDisponivelRepository, never()).findAll();
     }
 
     @Test
-    void deveBloquearCursosQuandoMediaBaixa() {
-        Aproveitamento aproveitamento = new Aproveitamento();
-        aproveitamento.setMedia(new BigDecimal("6.9"));
+    void deveLancarExcecaoQuandoNaoHaAproveitamento() {
+        Long alunoId = 3L;
 
-        when(aproveitamentoRepository.findTopByAlunoIdOrderByDataReferenciaDesc(2L))
-                .thenReturn(Optional.of(aproveitamento));
-        when(cursoDisponivelRepository.listarCursosDisponiveis(true)).thenReturn(Collections.emptyList());
+        // Nenhum aproveitamento encontrado → considerado bloqueado
+        when(aproveitamentoRepository.findTopByAlunoIdOrderByDataReferenciaDesc(alunoId))
+                .thenReturn(Optional.empty());
 
-        MediaInsuficienteException exception = assertThrows(MediaInsuficienteException.class,
-                () -> recompensaService.listarCursosDisponiveis(2L));
+        assertThrows(
+                MediaInsuficienteException.class,
+                () -> recompensaService.listarCursosDisponiveis(alunoId)
+        );
 
-        assertEquals(RecompensaService.MENSAGEM_MEDIA_INSUFICIENTE, exception.getMessage());
-        verify(cursoDisponivelRepository).listarCursosDisponiveis(true);
+        verify(cursoDisponivelRepository, never()).findAll();
     }
 }
