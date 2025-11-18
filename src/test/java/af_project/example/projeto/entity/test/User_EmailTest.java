@@ -12,7 +12,11 @@ class User_EmailTest {
         User_Email email = new User_Email("valid@test.com");
 
         assertEquals("valid@test.com", email.getEmailAddress());
+
+        // 👉 Esta linha é o que falta pro JaCoCo cobrir o toString()
+        assertEquals("valid@test.com", email.toString());
     }
+
 
     @Test
     void deveLancarExcecaoParaEmailInvalido_Null() {
