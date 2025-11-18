@@ -1,23 +1,16 @@
 package af_project.example.projeto.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import af_project.example.projeto.dto.AlunoPerfilDTO;
 import af_project.example.projeto.service.AlunoService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/alunos")
+@RequiredArgsConstructor     // ⬅ substitui o construtor manual
 public class AlunoController {
 
-    private final AlunoService alunoService;
-
-    public AlunoController(AlunoService alunoService) {
-        this.alunoService = alunoService;
-    }
+    private final AlunoService alunoService;   // ⬅ dependência imutável
 
     @GetMapping("/{alunoId}/perfil")
     public AlunoPerfilDTO perfil(@PathVariable Long alunoId,

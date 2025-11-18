@@ -7,6 +7,7 @@ import af_project.example.projeto.curso.domain.NotificacaoTipo;
 import af_project.example.projeto.curso.event.NotificacaoMatriculaEvent;
 import af_project.example.projeto.curso.repository.CursoMatriculaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,11 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CursoMatriculaService {
 
     private final CursoMatriculaRepository repository;
     private final ApplicationEventPublisher eventPublisher;
-
-    public CursoMatriculaService(CursoMatriculaRepository repository,
-                                 ApplicationEventPublisher eventPublisher) {
-        this.repository = repository;
-        this.eventPublisher = eventPublisher;
-    }
 
     @Transactional
     public CursoMatricula matricularAssinanteAtivo(Long alunoId, Long cursoId, LocalDate dataMatricula) {

@@ -1,17 +1,19 @@
 package af_project.example.projeto.service;
 
+import af_project.example.projeto.dto.AlunoPerfilDTO;
+import af_project.example.projeto.entity.Aluno;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.stereotype.Service;
-
-import af_project.example.projeto.dto.AlunoPerfilDTO;
-import af_project.example.projeto.entity.Aluno;
-
 @Service
+@RequiredArgsConstructor
 public class AlunoService {
 
+    // "Banco de dados" em memória — imutável como referência
     private final Map<Long, Aluno> alunos = new ConcurrentHashMap<>();
 
     public Aluno salvar(Aluno aluno) {

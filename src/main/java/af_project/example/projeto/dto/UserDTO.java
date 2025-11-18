@@ -1,59 +1,24 @@
 package af_project.example.projeto.dto;
 
 import af_project.example.projeto.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor      // construtor vazio
+@AllArgsConstructor      // construtor completo
 public class UserDTO {
 
     private Long id;
     private String username;
     private String email;
 
-    // Construtor vazio
-    public UserDTO() {}
-
-    // Construtor com todos os parâmetros
-    public UserDTO(Long id, String username, String email) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-    }
-
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    // Método de conversão de User para UserDTO
     public static UserDTO fromEntity(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-
-        // Certifique-se de que o método getEmailAddress() existe na classe User_Email
-        if (user.getEmail() != null) {
-            userDTO.setEmail(user.getEmail().getEmailAddress());
-        }
-
-        return userDTO;
+        return new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail() != null ? user.getEmail().getEmailAddress() : null
+        );
     }
 }
