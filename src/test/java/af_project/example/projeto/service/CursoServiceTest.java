@@ -36,6 +36,29 @@ class CursoServiceTest {
         assertEquals(1, aluno.getRecompensas().size());
         assertEquals(3, recompensa.get().getVagas());
     }
+    @Test
+    void naoDeveGerarRecompensaQuandoAproveitamentoSuficienteMasCursoNaoConcluido() {
+        Aluno aluno = new Aluno(4L, "Daniela");
+
+        // Curso “especial” só para o teste: ele ignora o concluir()
+        Curso curso = new Curso(4L, "Java Avançado") {
+            @Override
+            public boolean isConcluido() {
+                return false; // força o segundo operando do && a ser false
+            }
+        };
+
+        // Aproveitamento suficiente (mesmos dados do teste que gera recompensa)
+        CursoConclusaoEvento evento = new CursoConclusaoEvento(true, 40, 40, 9.5);
+
+        Optional<Recompensa> recompensa = cursoService.registrarConclusao(curso, aluno, evento);
+
+        // Mesmo com aproveitamento bom, NÃO deve gerar recompensa porque
+        // isConcluido() “falso” faz o if cair no ramo false
+        assertTrue(recompensa.isEmpty());
+        assertEquals(0, aluno.getRecompensas().size());
+    }
+
 
     @Test
     void naoDeveGerarRecompensaQuandoAproveitamentoInsuficiente() {

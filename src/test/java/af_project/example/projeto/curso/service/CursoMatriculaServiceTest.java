@@ -205,6 +205,35 @@ class CursoMatriculaServiceTest {
         assertThrows(IllegalStateException.class,
                 () -> service.atualizarStatus(matriculaId, CONCLUIDO, referenciaAposLimiteConclusao));
     }
+    @Test
+    void atualizarStatus_concluidoDentroDoPrazoNaoDeveLancarExcecao() {
+        Long matriculaId = 500L;
+        LocalDate hoje = LocalDate.of(2024, 1, 10);
+
+        CursoMatricula matricula = new CursoMatricula();
+        matricula.setId(matriculaId);
+        matricula.setAlunoId(1L);
+        matricula.setCursoId(2L);
+        matricula.setDataMatricula(hoje);
+        matricula.setDataLimiteInicio(hoje.plusDays(7));
+        // prazo final pra concluir
+        matricula.setDataLimiteConclusao(hoje.plusYears(1));
+        matricula.setStatus(CursoMatriculaStatus.EM_ANDAMENTO);
+
+        when(repository.findById(matriculaId)).thenReturn(Optional.of(matricula));
+        when(repository.save(any(CursoMatricula.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, CursoMatricula.class));
+
+        // referencia ANTES do limite de conclusão -> NÃO deve lançar exceção
+        LocalDate referenciaAntesDoPrazo = matricula.getDataLimiteConclusao().minusDays(1);
+
+        CursoMatricula atualizado =
+                service.atualizarStatus(matriculaId, CursoMatriculaStatus.CONCLUIDO, referenciaAntesDoPrazo);
+
+        assertEquals(CursoMatriculaStatus.CONCLUIDO, atualizado.getStatus());
+        verify(repository).findById(matriculaId);
+        verify(repository).save(matricula);
+    }
 
     // ----------------------------------------------------------------------
     // 8) listarNotificacoes - garante ordenação e cobertura total do método
